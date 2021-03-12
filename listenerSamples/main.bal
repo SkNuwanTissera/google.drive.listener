@@ -17,7 +17,7 @@
 import ballerina/http;
 import ballerina/log;
 import nuwantissera/googleapis_drive as drive;
-import nuwantissera/googleapis_drive.trigger as trigger;
+import nuwantissera/googleapis_drive.'listener as listen;
 
 configurable string callbackURL = ?;
 configurable string clientId = ?;
@@ -25,21 +25,27 @@ configurable string clientSecret = ?;
 configurable string refreshUrl = drive:REFRESH_URL;
 configurable string refreshToken = ?;
 
-string channelId = "";
-
-# Description  
+# Event Trigger class  
 public class EventTrigger {
     
-    public function onNewFolderCreatedEvent(string folderId) {}
-    public function onFolderDeletedEvent(string folderID) {}
-    public function onNewFileCreatedEvent(string fileId) {
-        log:print("New file was created:" + fileId);
+    public function onNewFolderCreatedEvent(string folderId) {
+        log:print("New folder was created:" + folderId);
     }
+
+    public function onFolderDeletedEvent(string folderID) {}
+
+    public function onNewFileCreatedEvent(string fileId) {}
+
     public function onFileDeletedEvent(string fileId) {}
+
     public function onNewFileCreatedInSpecificFolderEvent(string fileId) {}
+
     public function onNewFolderCreatedInSpecificFolderEvent(string folderId) {}
+
     public function onFolderDeletedInSpecificFolderEvent(string folderId) {}
+
     public function onFileDeletedInSpecificFolderEvent(string fileId) {}
+
     public function onFileUpdateEvent(string fileId) {}
 }
 
@@ -52,14 +58,15 @@ public class EventTrigger {
         }
     };
 
-    trigger:ListenerConfiguration configuration = {
+    listen:ListenerConfiguration configuration = {
         port: 9090,
         callbackURL: callbackURL,
         clientConfiguration: config,
         eventService: new EventTrigger()
+        // specificFolderOrFileId : "1BRhpyHgr26pSYq1cgOVfAYI-N37ZcYsF"
     };
 
-    listener trigger:DriveEventListener gDrivelistener = new (configuration);
+    listener listen:DriveEventListener gDrivelistener = new (configuration);
 
     service / on gDrivelistener {
         resource function post gsheet(http:Caller caller, http:Request request) returns string|error? {
@@ -69,11 +76,10 @@ public class EventTrigger {
             if (result is error) {
                 log:printError("Error in responding ", err = result);
             }
- 
         }
     }
 
 public function main() returns error? {
     drive:Client driveClient = check new (config);
-    drive:File|error response = driveClient->createFile("fileName");
+    drive:File|error response = driveClient->createFile("fileName", );
 }

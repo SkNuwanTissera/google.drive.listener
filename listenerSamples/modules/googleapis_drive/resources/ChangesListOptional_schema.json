@@ -1,0 +1,1 @@
+{"nuwantissera/googleapis_drive:0.1.18:ChangesListOptional":{"driveId":"string","fields":"string","includeCorpusRemovals":"boolean","includeItemsFromAllDrives":"boolean","includePermissionsForView":"string","includeRemoved":"boolean","pageSize":"int","restrictToMyDrive":"boolean","spaces":"string","supportsAllDrives":"boolean?"}}
