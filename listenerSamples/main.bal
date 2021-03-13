@@ -25,6 +25,10 @@ configurable string clientSecret = ?;
 configurable string refreshUrl = drive:REFRESH_URL;
 configurable string refreshToken = ?;
 
+string parentFolderId = "1IOpfSe4BuxBTzh0EbByQHIWqDkmbEWDW";
+string folderId = "<FOLDER_ID_TO_BE_DELETED>";
+string folderName = "<FOLDER_ID_TO_BE_DELETED>";
+
 # Event Trigger class  
 public class EventTrigger {
     
@@ -32,21 +36,36 @@ public class EventTrigger {
         log:print("New folder was created:" + folderId);
     }
 
-    public function onFolderDeletedEvent(string folderID) {}
+    public function onFolderDeletedEvent(string folderID) {
+        log:print("This folder was removed to the trashed:" + folderID);
+    }
 
-    public function onNewFileCreatedEvent(string fileId) {}
+    public function onNewFileCreatedEvent(string fileId) {
+        log:print("New File was created:" + fileId);
+    }
 
-    public function onFileDeletedEvent(string fileId) {}
+    public function onFileDeletedEvent(string fileId) {
+        log:print("This File was removed to the trashed:" + fileId);
+    }
 
-    public function onNewFileCreatedInSpecificFolderEvent(string fileId) {}
+    public function onNewFileCreatedInSpecificFolderEvent(string fileId) {
+        log:print("A file with Id " + fileId + "was created in side the folder specified");
+    }
 
-    public function onNewFolderCreatedInSpecificFolderEvent(string folderId) {}
+    public function onNewFolderCreatedInSpecificFolderEvent(string folderId) {
+        log:print("A folder with Id " + folderId + "was created in side the folder specified");
+    }
 
-    public function onFolderDeletedInSpecificFolderEvent(string folderId) {}
+    public function onFolderDeletedInSpecificFolderEvent(string folderId) {
+        log:print("A folder with Id " + folderId + "was deleted in side the folder specified");
+    }
 
-    public function onFileDeletedInSpecificFolderEvent(string fileId) {}
-
-    public function onFileUpdateEvent(string fileId) {}
+    public function onFileDeletedInSpecificFolderEvent(string fileId) {
+        log:print("A file with Id " + fileId + "was deleted in side the folder specified");
+    }
+    public function onFileUpdateEvent(string fileId) {
+        log:print("File updated : " + fileId);
+    }
 }
 
     drive:Configuration config = {
@@ -62,8 +81,8 @@ public class EventTrigger {
         port: 9090,
         callbackURL: callbackURL,
         clientConfiguration: config,
-        eventService: new EventTrigger()
-        // specificFolderOrFileId : "1BRhpyHgr26pSYq1cgOVfAYI-N37ZcYsF"
+        eventService: new EventTrigger(),
+        specificFolderOrFileId : parentFolderId
     };
 
     listener listen:DriveEventListener gDrivelistener = new (configuration);
@@ -81,5 +100,9 @@ public class EventTrigger {
 
 public function main() returns error? {
     drive:Client driveClient = check new (config);
-    drive:File|error response = driveClient->createFile("fileName", );
+    // drive:File|error response = driveClient->createFolder("ListnerTest_1");
+    drive:File|error response = driveClient->createFile("ListnerTest_1", drive:DOCUMENT, parentFolderId);
+    if (response is drive:File) {
+        log:print(response.toString());
+    }
 }
